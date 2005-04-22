@@ -1,0 +1,116 @@
+NAME
+    Configuration initializer
+
+SYNOPSIS
+      use CGI::Getopt;
+
+      my $cg = CGI::Getopt->new('ifn', 'my_init.cfg', 'opt', 'vhS:a:');
+      my $ar = $cg->get_inputs; 
+
+DESCRIPTION
+    This program enables CGI and command line inputs. It uses CGI and
+    Getopt::Std modules.
+
+   new (ifn => 'file.cfg', opt => 'hvS:')
+
+    Input variables:
+
+      $ifn  - input/initial file name. 
+      $opt  - options for Getopt::Std
+
+    Variables used or routines called:
+
+      None
+
+    How to use:
+
+       my $cg = new CGI::Getopt;      # or
+       my $cg = CGI::Getopt->new;     # or
+       my $cg = CGI::Getopt->new(ifn=>'file.cfg',opt=>'hvS:'); # or
+       my $cg = CGI::Getopt->new('ifn', 'file.cfg','opt','hvS:'); 
+
+    Return: new empty or initialized CGI::Getopt object.
+
+    This method constructs a Perl object and capture any parameters if
+    specified. It creates and defaults the following variables:
+
+      $self->{ifn} = ""
+      $self->{opt} = 'hvS:'; 
+
+   get_inputs($ifn, $opt)
+
+    Input variables:
+
+      $ifn  - input/initial file name. 
+      $opt  - options for Getopt::Std, for instance 'vhS:a:'
+
+    Variables used or routines called:
+
+      None
+
+    How to use:
+
+      my $ar = $self->get_inputs('/tmp/my_init.cfg','vhS:');
+
+    Return: ($q, $ar) where $q is the CGI object and $ar is a hash array
+    reference containing parameters from web form, or command line and/or
+    configuration file if specified.
+
+    This method performs the following tasks:
+
+      1) create a CGI object
+      2) get input from CGI web form or command line 
+      3) read initial file if provided
+      4) merge the two inputs into one hash array
+
+    This method uses the following rules:
+
+      1) All parameters in the initial file can not be changed through
+         command line or web form;
+      2) The "-S" option in command line can be used to set non-single
+         char parameters in the format of 
+         -S k1=value1:k2=value2
+      3) Single char parameters are included only if they are listed
+         in $opt input variable.
+
+    Some parameters are dfined automatically:
+
+      script_name - $ENV{SCRIPT_NAME} 
+      url_dn      - $ENV{HTTP_HOST}
+      home_url    - http://$ENV{HTTP_HOST}
+      HomeLoc     - http://$ENV{HTTP_HOST}/
+      version     - $VERSION
+      action      - https://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}
+      encoding    - application/x-www-form-urlencoded
+      method      - POST
+
+   read_init_file($fn)
+
+    Input variables:
+
+      $fn - full path to a file name
+
+    Variables used or routines called:
+
+      None 
+
+    How to use:
+
+      my $ar = $self->read_init_file('crop.cfg');
+
+    Return: a hash array ref
+
+    This method reads a configuraton file containing parameters in the
+    format of key=values. Multiple lines is allowed for values as long as
+    the lines after the "key=" line are indented as least with two blanks.
+    For instance:
+
+      width = 80
+      desc  = This is a long
+              description about the value
+
+    This will create a hash array of
+
+      ${$ar}{width} = 80
+      ${$ar}{desc}  = "This is a long description about the value"
+
