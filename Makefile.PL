@@ -29,10 +29,10 @@ use ExtUtils::AutoInstall (
     -version        => '0.40',
 );
 WriteMakefile(
-    DISTNAME        => 'CGI-Getopt-0.1.tar.gz'       ,
+    DISTNAME        => 'CGI-Getopt-0.11.tar.gz'      ,
     ABSTRACT        => 'Configuration initializer'   ,
     NAME            => 'CGI::Getopt'                 ,
     PREREQ_PM       => {Test::Harness => 0.1,Test::More => 0.45,},
     AUTHOR          => 'geotiger2001@yahoo.com'      ,
-    VERSION         => 0.1                           ,
+    VERSION         => 0.11                          ,
 );

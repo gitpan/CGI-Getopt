@@ -2,5 +2,5 @@ Getopt.pm
 test.pl
 Makefile.PL
 ./t/Getopt.t
-CGI-Getopt-0.1.readme
+CGI-Getopt-0.11.readme
 README

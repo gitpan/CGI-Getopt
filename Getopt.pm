@@ -8,7 +8,7 @@ use CGI;
 use Getopt::Std;
 use Debug::EchoMessage;
 
-our $VERSION = 0.1;
+our $VERSION = 0.11;
 warningsToBrowser(1);
 
 require Exporter;
@@ -21,7 +21,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-Configuration initializer 
+CGI::Getopt - Configuration initializer 
 
 =head1 SYNOPSIS
 
@@ -268,3 +268,36 @@ sub read_init_file {
 }
 
 1;
+
+=head1 HISTORY
+
+=over 4
+
+=item * Version 0.1
+
+This version is to test the concept and routines.
+
+=item * Version 0.11
+
+04/29/2005 (htu) - fixed a few minor things such as module title. 
+
+=cut
+
+=head1 SEE ALSO (some of docs that I check often)
+
+Data::Describe, Oracle::Loader, CGI::Getopt, File::Xcopy,
+perltoot(1), perlobj(1), perlbot(1), perlsub(1), perldata(1),
+perlsub(1), perlmod(1), perlmodlib(1), perlref(1), perlreftut(1).
+
+=head1 AUTHOR
+
+Copyright (c) 2005 Hanming Tu.  All rights reserved.
+
+This package is free software and is provided "as is" without express
+or implied warranty.  It may be used, redistributed and/or modified
+under the terms of the Perl Artistic License (see
+http://www.perl.com/perl/misc/Artistic.html)
+
+=cut
+
+
