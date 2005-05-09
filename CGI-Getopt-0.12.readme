@@ -121,6 +121,9 @@ HISTORY
     * Version 0.11
         04/29/2005 (htu) - fixed a few minor things such as module title.
 
+    * Version 0.12
+        Make sure Debug::EchoMessage installed as pre-required.
+
 SEE ALSO (some of docs that I check often)
         Data::Describe, Oracle::Loader, CGI::Getopt, File::Xcopy,
         perltoot(1), perlobj(1), perlbot(1), perlsub(1), perldata(1),

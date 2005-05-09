@@ -8,7 +8,7 @@ use CGI;
 use Getopt::Std;
 use Debug::EchoMessage;
 
-our $VERSION = 0.11;
+our $VERSION = 0.12;
 warningsToBrowser(1);
 
 require Exporter;
@@ -191,8 +191,9 @@ sub get_inputs {
         $opt{$k} = $q->param($k) if ! exists $opt{$k}; 
     }
     # check input variables
-    $opt{v} = 'n' if ! exists $opt{v} || !defined($opt{v}); 
-    $opt{v}  = ($opt{v} && $opt{v} =~ /^y/i)?1:0;
+    $opt{v}  = 'n' if ! exists $opt{v} || !defined($opt{v}); 
+    $opt{v}  = ($opt{v} && $opt{v} =~ /^y/i)?1:$opt{v};
+    $opt{v}  = ($opt{v} =~ /\d+/)?$opt{v}:0;
     
     %cfg = ($ifn && -f $ifn)?$s->read_init_file($ifn):();
     $cfg{version} = "CGI::Getopt $VERSION";
@@ -280,6 +281,10 @@ This version is to test the concept and routines.
 =item * Version 0.11
 
 04/29/2005 (htu) - fixed a few minor things such as module title. 
+
+=item * Version 0.12
+
+Make sure Debug::EchoMessage installed as pre-required.
 
 =cut
 

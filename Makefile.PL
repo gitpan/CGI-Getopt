@@ -26,13 +26,13 @@ sub MY::preinstall  { return 1; }   # return false to skip install
 # post-install handler; takes $module_name, $version, and $success
 sub MY::postinstall { return 0 }
 use ExtUtils::AutoInstall (
-    -version        => '0.40',
+%{HASH(0x1b3250)}
 );
 WriteMakefile(
-    DISTNAME        => 'CGI-Getopt-0.11.tar.gz'      ,
+    DISTNAME        => 'CGI-Getopt-0.12.tar.gz'      ,
     ABSTRACT        => 'Configuration initializer'   ,
     NAME            => 'CGI::Getopt'                 ,
     PREREQ_PM       => {Test::Harness => 0.1,Test::More => 0.45,},
     AUTHOR          => 'geotiger2001@yahoo.com'      ,
-    VERSION         => 0.11                          ,
+    VERSION         => 0.12                          ,
 );
