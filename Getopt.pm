@@ -8,13 +8,14 @@ use CGI;
 use Getopt::Std;
 use Debug::EchoMessage;
 
-our $VERSION = 0.12;
+our $VERSION = 0.13;
 warningsToBrowser(1);
 
 require Exporter;
 our @ISA         = qw(Exporter);
 our @EXPORT      = qw();
-our @EXPORT_OK   = qw(get_inputs read_init_file);
+our @EXPORT_OK   = qw(get_inputs read_init_file read_cfg_file
+                   );
 our %EXPORT_TAGS = (
     all  => [@EXPORT_OK]
 );
@@ -257,16 +258,128 @@ sub read_init_file {
         next if $_ =~ /^#/ || $_ =~ /^\s*$/; 
         chomp;               # remove line break
         if ($_ =~ /\s*(\w+)\s*=\s*(.+)/) {
-            $k = $1; $v = $2;  $v =~ s/\s*#.*$//;
+            $k = $1; $v = $2;  
+            $v =~ s/\s*#.*$//;   # remove inline comments
             $h{$k} = $v;
         } else {
-            $v = $_; $v =~ s/^\s+//; $v =~ s/\s+$//; $v =~ s/\s*#.*$//;
+            $v = $_; 
+            # remove leading and trailing spaces 
+            $v =~ s/^\s+//; $v =~ s/\s+$//; 
+            $v =~ s/\s*#.*$//;   # remove inline comments
             $h{$k} .= " $v";
         }
     }
     close FILE;
     return %h;
 }
+
+=head3  read_cfg_file($fn,$ot, $fs)
+
+Input variables:
+
+  $fn - full path to a file name
+  $ot - output array type: A(array) or H(hash)
+  $fs - field separator, default to vertical bar (|)
+
+
+Variables used or routines called:
+
+  echoMSG  - display message
+
+How to use:
+
+  my $arf = $self->read_cfg_file('crop.cfg', 'H');
+
+Return: an array or hash array ref containing (${$arf}[$i]{$itm},
+${$arf}[$i][$j];
+
+This method reads a configuraton file containing delimited fields. 
+It looks a line starting with '#CN:' for column names. If it finds 
+the line, it uses to define the first row in the array or use the 
+column names as keys in the hash array. 
+
+The default output type is A(array). It will read the field names
+into the first row ([0][0]~[0][n]). If output array type is hash,
+then it uses the columns name as keys such as ${$arf}[$i]{key}. 
+If it does not find '#CN:' line, it will use 'FD001' ~ 'FD###' as
+keys.
+
+  #Form: fm1
+  #CN: Step|VarName|DispName|Action|Description				
+  0.0|t1|Title||CROP Worksheet				
+
+
+=cut
+
+sub read_cfg_file {
+    my $s = shift;
+    my ($fn,$ot,$fs) = @_;
+    #
+    if (!$fn)    { carp "    No file name is specified."; return; }
+    if (!-f $fn) { carp "    File - $fn does not exist!"; return; }
+    $ot = 'A' if !$ot;
+    
+    my (@a, @b, $i, $j, $k, @keys, $rec);
+    open FILE, "< $fn" or
+        croak "ERR: could not read to file - $fn: $!\n";
+    @a = <FILE>;
+    close FILE;
+    my @r = (); 
+    # get column names first
+    for my $x (0..$#a) {
+        $rec = $a[$x];
+        next if ($rec !~ /^#\s*CN:\s*(.*)/);
+        $k =$1; $k =~ s/^\s+//; $k =~ s/\s+$//; $k =~ s/\s+/_/g;
+        @keys = split /\|/, $k;
+        $r[0] = [@keys];
+        last;
+    }
+    
+    # get content
+    $i = 0; $rec = "";
+    for my $x (0..$#a) {
+        # skip comment and empty lines
+        next if ($a[$x] =~ /^#/ || $a[$x] =~ /^\s*$/);
+        chomp $a[$x]; 
+        if ($a[$x] =~ /^\s*\|/) {
+            $rec .= " $a[$x]"; # continuous record
+        } elsif (index($a[$x], "\|")>=0) {
+            if ($rec) {        # save the previous record
+                $rec =~ s/\s+/ /g; @b = split /\|/, $rec; 
+                ++$i; $r[$i]=[@b];
+            }
+            $rec = $a[$x];     # a new record
+        } else {
+            $rec .= " $a[$x]"; # continuous record
+        }
+    }
+    if ($rec) { 
+        $rec =~ s/\s+/ /g; @b = split /\|/, $rec; 
+        ++$i; $r[$i]=[@b];
+    }
+    if (!@keys) {  # if it did not get the keys
+        for $j (0..$#{$r[1]}) {
+            push @keys, (sprintf "DF%03d", $j+1);
+        }
+        $r[0] = [@keys];        
+    }
+    return \@r if $ot =~ /^A/i; 
+    #
+    my @hr = ();
+
+    # convert the array into hash array
+    for $i (1..$#r) {
+        my %h = ();
+        for $j (0..$#{$r[$i]}) {
+            $k = $r[0][$j]; 
+            $h{$k} = $r[$i][$j];
+        }
+        $j = $i-1;
+        $hr[$j] = \%h;
+    }
+    return \@hr;
+}
+
 
 1;
 
@@ -285,6 +398,10 @@ This version is to test the concept and routines.
 =item * Version 0.12
 
 Make sure Debug::EchoMessage installed as pre-required.
+
+=item * Version 0.13
+
+Added read_cfg_file routine.
 
 =cut
 

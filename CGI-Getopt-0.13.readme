@@ -114,6 +114,39 @@ DESCRIPTION
       ${$ar}{width} = 80
       ${$ar}{desc}  = "This is a long description about the value"
 
+   read_cfg_file($fn,$ot, $fs)
+
+    Input variables:
+
+      $fn - full path to a file name
+      $ot - output array type: A(array) or H(hash)
+      $fs - field separator, default to vertical bar (|)
+
+    Variables used or routines called:
+
+      echoMSG  - display message
+
+    How to use:
+
+      my $arf = $self->read_cfg_file('crop.cfg', 'H');
+
+    Return: an array or hash array ref containing (${$arf}[$i]{$itm},
+    ${$arf}[$i][$j];
+
+    This method reads a configuraton file containing delimited fields. It
+    looks a line starting with '#CN:' for column names. If it finds the
+    line, it uses to define the first row in the array or use the column
+    names as keys in the hash array.
+
+    The default output type is A(array). It will read the field names into
+    the first row ([0][0]~[0][n]). If output array type is hash, then it
+    uses the columns name as keys such as ${$arf}[$i]{key}. If it does not
+    find '#CN:' line, it will use 'FD001' ~ 'FD###' as keys.
+
+      #Form: fm1
+      #CN: Step|VarName|DispName|Action|Description                         
+      0.0|t1|Title||CROP Worksheet                          
+
 HISTORY
     * Version 0.1
         This version is to test the concept and routines.
@@ -123,6 +156,9 @@ HISTORY
 
     * Version 0.12
         Make sure Debug::EchoMessage installed as pre-required.
+
+    * Version 0.13
+        Added read_cfg_file routine.
 
 SEE ALSO (some of docs that I check often)
         Data::Describe, Oracle::Loader, CGI::Getopt, File::Xcopy,
